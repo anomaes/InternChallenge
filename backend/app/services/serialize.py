@@ -23,6 +23,7 @@ from app.domain.master import MasterData
 from app.domain.matching import cost_center_suggestions, match_supplier
 from app.domain.reconcile import LineIn, line_value
 from app.domain.workflow import LABELS, State
+from app.services.evaluate import merged_into
 from app.services.orders import order_blockers
 
 # Blocking issues a clerk may wave through after looking: they describe the email, not a
@@ -191,6 +192,26 @@ def summaries(session: Session, reqs: list[Requisition]) -> list[S.ReqSummary]:
     return [summary(r, ctx) for r in reqs]
 
 
+def _email_out(session: Session, email: Email, md: MasterData) -> S.EmailOut:
+    attachments = session.exec(select(Attachment).where(Attachment.email_id == email.id))
+    return S.EmailOut(
+        **email.model_dump(
+            exclude={"raw", "thread", "references", "content_hash", "sent_date_local"}
+        ),
+        thread=[
+            S.ThreadMessageOut(
+                **m,
+                is_internal=bool(
+                    m.get("author_email") and m["author_email"].endswith("@customer.com")
+                ),
+                employee_id=(e.id if (e := md.employee_by_email(m.get("author_email"))) else None),
+            )
+            for m in email.thread
+        ],
+        attachments=[S.AttachmentOut.model_validate(a, from_attributes=True) for a in attachments],
+    )
+
+
 def detail(session: Session, req: Requisition) -> S.ReqDetail:
     ctx = Context(session, [req])
     md = ctx.md
@@ -242,7 +263,8 @@ def detail(session: Session, req: Requisition) -> S.ReqDetail:
         ]
 
     sm = match_supplier(req.supplier_name_doc, req.supplier_vat_doc, list(md.suppliers.values()))
-    attachments = list(session.exec(select(Attachment).where(Attachment.email_id == email.id)))
+    merged = merged_into(session, req)
+    email_ids = [email.id, *(m.email_id for m in merged)]
     events = list(
         session.exec(
             select(Event)
@@ -260,7 +282,7 @@ def detail(session: Session, req: Requisition) -> S.ReqDetail:
             .order_by(PurchaseOrder.id)
         )
     )
-    redactions = list(session.exec(select(Redaction).where(Redaction.email_id == email.id)))
+    redactions = list(session.exec(select(Redaction).where(Redaction.email_id.in_(email_ids))))  # type: ignore[union-attr]
     linked_from = list(session.exec(select(Requisition).where(Requisition.linked_to_id == req.id)))
     gl = md.gl_accounts
 
@@ -326,26 +348,16 @@ def detail(session: Session, req: Requisition) -> S.ReqDetail:
         steps=steps_out,
         steps_are_preview=preview,
         step_history=[_step_out(s, md) for s in history],
-        email=S.EmailOut(
-            **email.model_dump(
-                exclude={"raw", "thread", "references", "content_hash", "sent_date_local"}
-            ),
-            thread=[
-                S.ThreadMessageOut(
-                    **m,
-                    is_internal=bool(
-                        m.get("author_email") and m["author_email"].endswith("@customer.com")
-                    ),
-                    employee_id=(
-                        e.id if (e := md.employee_by_email(m.get("author_email"))) else None
-                    ),
-                )
-                for m in email.thread
-            ],
-            attachments=[
-                S.AttachmentOut.model_validate(a, from_attributes=True) for a in attachments
-            ],
-        ),
+        email=_email_out(session, email, md),
+        merged_emails=[
+            S.MergedEmailOut(
+                requisition_id=m.id,  # type: ignore[arg-type]
+                public_id=m.public_id,
+                link_type=m.link_type or "merged",
+                email=_email_out(session, session.get(Email, m.email_id), md),  # type: ignore[arg-type]
+            )
+            for m in merged
+        ],
         events=[
             S.EventOut(
                 id=e.id,
@@ -359,7 +371,10 @@ def detail(session: Session, req: Requisition) -> S.ReqDetail:
         ],  # type: ignore[arg-type]
         llm_runs=[S.LLMRunOut.model_validate(r, from_attributes=True) for r in runs],
         purchase_orders=[S.PurchaseOrderOut.model_validate(p, from_attributes=True) for p in pos],
-        redactions=[S.RedactionOut(kind=r.kind, placeholder=r.placeholder, original=r.original) for r in redactions],
+        redactions=[
+            S.RedactionOut(kind=r.kind, placeholder=r.placeholder, original=r.original)
+            for r in redactions
+        ],
         supplier_candidates=[S.SupplierCandidate(**c) for c in sm.candidates],
         cost_center_suggestions=[
             S.CostCenterSuggestion(**c)

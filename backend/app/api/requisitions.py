@@ -10,7 +10,7 @@ from app.api import schemas as S
 from app.db.models import Email, Issue, LineItem, Requisition, Supplier, utcnow
 from app.db.session import get_session
 from app.domain.master import MasterData
-from app.domain.workflow import EDITABLE, State, TransitionError
+from app.domain.workflow import EDITABLE, LABELS, State, TransitionError
 from app.privacy.redact import Redactor
 from app.services.audit import log_event, transition
 from app.services.bus import bus
@@ -425,6 +425,8 @@ def duplicate_action(
             raise HTTPException(409, "Only requisitions in review or approval can be closed.")
         supersede_run(session, req)
         _resolve_link_issues(session, req, "Closed as a duplicate.")
+        # Closed without copying anything: not part of the original's source (see merged_into).
+        req.link_type = "duplicate"
         msg = (
             f"Closed as a duplicate of {original.public_id}."
             if original
@@ -444,18 +446,51 @@ def duplicate_action(
     if body.action == "apply_correction":
         if original is None:
             raise HTTPException(409, "Link this message to the original request first.")
-        if original.state in (State.ORDERED, State.CLOSED_DUPLICATE):
-            raise HTTPException(
-                409,
-                f"{original.public_id} is already {original.state.lower()}; it can't be corrected.",
-            )
+        _check_merge(req, original)
         _apply_correction(session, req, original)
         return _done(session, req)
     raise HTTPException(422, "Unknown action.")
 
 
-def _apply_correction(session: Session, corr: Requisition, original: Requisition) -> None:
-    """Copy what the correction states onto the original; the original's chain restarts."""
+def _check_merge(src: Requisition, target: Requisition) -> None:
+    if src.state not in (State.NEEDS_REVIEW, State.PENDING_APPROVAL):
+        raise HTTPException(409, "Only requisitions in review or approval can be merged.")
+    if State(target.state) not in EDITABLE:
+        raise HTTPException(
+            409,
+            f"{target.public_id} is {LABELS[State(target.state)].lower()}; it can't take changes.",
+        )
+
+
+@router.post("/requisitions/{req_id}/merge", response_model=S.ReqDetail)
+def merge(req_id: int, body: S.LinkIn, session: Session = Depends(get_session)) -> S.ReqDetail:
+    """Merge this requisition's email into another requisition, picked by the clerk: what it
+    states is copied over (as a correction is), its email and attachments join the target's
+    source, and this one is closed. For a resend with the attachment, a follow-up that adds
+    the missing details, and so on, whether or not it was detected as a duplicate."""
+    req = _get(session, req_id)
+    target = session.exec(
+        select(Requisition).where(Requisition.public_id == body.public_id.strip().upper())
+    ).first()
+    if target is None or target.id == req.id:
+        raise HTTPException(404, "No such requisition.")
+    if target.linked_to_id == req.id:
+        raise HTTPException(
+            409, f"{target.public_id} is linked to this one; merge it here instead."
+        )
+    _check_merge(req, target)
+    req.linked_to_id = target.id
+    req.link_reason = "Merged by the clerk."
+    _apply_correction(session, req, target, how="merged")
+    return _done(session, req)
+
+
+def _apply_correction(
+    session: Session, corr: Requisition, original: Requisition, how: str = "correction"
+) -> None:
+    """Copy what the correction states onto the original; the original's chain restarts.
+    `how` is "merged" for a clerk merge: the same copy, worded as such."""
+    merged = how == "merged"
     copied: list[str] = []
     for name in (
         "supplier_name_doc", "supplier_vat_doc", "supplier_address_doc", "supplier_id", "cost_center_doc",
@@ -467,9 +502,10 @@ def _apply_correction(session: Session, corr: Requisition, original: Requisition
             setattr(original, name, value)
             copied.append(name)
     prov = dict(original.provenance)
+    origin = f"Merged from {corr.public_id}" if merged else f"From correction {corr.public_id}"
     for key in ("supplier", "cost_center", "currency", "delivery_date"):
         if key in corr.provenance:
-            prov[key] = {**corr.provenance[key], "reason": f"From correction {corr.public_id}"}
+            prov[key] = {**corr.provenance[key], "reason": origin}
     original.provenance = prov
     corr_lines = lines_of(session, corr)
     if corr_lines:
@@ -488,20 +524,23 @@ def _apply_correction(session: Session, corr: Requisition, original: Requisition
         session,
         original,
         CLERK,
-        "corrected",
-        f"Corrected from {corr.public_id}: "
+        "merged" if merged else "corrected",
+        (
+            f"Merged in {corr.public_id}, with its email: "
+            if merged
+            else f"Corrected from {corr.public_id}: "
+        )
         + (", ".join(copied) or "nothing to copy; edit by hand"),
     )
-    _resolve_link_issues(session, corr, f"Applied as a correction to {original.public_id}.")
-    supersede_run(session, corr)
-    corr.link_type = "correction"
-    transition(
-        session,
-        corr,
-        State.CLOSED_DUPLICATE,
-        CLERK,
-        f"applied as a correction to {original.public_id}",
+    done = (
+        f"merged into {original.public_id}"
+        if merged
+        else f"applied as a correction to {original.public_id}"
     )
+    _resolve_link_issues(session, corr, done[0].upper() + done[1:] + ".")
+    supersede_run(session, corr)
+    corr.link_type = how
+    transition(session, corr, State.CLOSED_DUPLICATE, CLERK, done)
     if original.state in (
         State.PENDING_APPROVAL,
         State.APPROVED,
@@ -512,7 +551,7 @@ def _apply_correction(session: Session, corr: Requisition, original: Requisition
             session,
             original,
             CLERK,
-            reason=f"corrected by {corr.public_id}: chain restarts from step 1",
+            reason=f"{'merged with' if merged else 'corrected by'} {corr.public_id}: chain restarts from step 1",
         )
     session.add(original)
     bus.publish("requisition", id=original.id, state=original.state)

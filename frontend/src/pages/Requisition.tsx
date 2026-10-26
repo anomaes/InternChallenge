@@ -1,15 +1,16 @@
-import { ArrowLeft, Bot, ExternalLink, FileText, RefreshCw, ShieldCheck, ShieldOff } from 'lucide-react'
+import { useQueryClient } from '@tanstack/react-query'
+import { ArrowLeft, Bot, ExternalLink, FileText, GitMerge, RefreshCw, ShieldCheck, ShieldOff } from 'lucide-react'
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Group, Panel as ResizablePanel, Separator } from 'react-resizable-panels'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { api, type ReqDetail } from '@/api/client'
-import { useReqAction, useRequisition, useSettings } from '@/api/hooks'
+import { keys, useReqAction, useRequisition, useRequisitions, useSettings } from '@/api/hooks'
 import { AmountsPanel, FieldsPanel, LinesPanel } from '@/components/DetailsPanel'
 import { Route, StatePill } from '@/components/domain'
 import { IssuePanel } from '@/components/IssuePanel'
-import { SourcePanel, type SourceTab } from '@/components/SourcePanel'
-import { Badge, Button, Dialog, Kbd, Label, Panel, Skeleton, Textarea, Tip } from '@/components/ui'
-import { cn, dateTime, money } from '@/lib/format'
+import { allAttachments, SourcePanel, type SourceTab } from '@/components/SourcePanel'
+import { Badge, Button, Dialog, Input, Kbd, Label, Panel, Skeleton, Textarea, Tip } from '@/components/ui'
+import { cn, date, dateTime, money } from '@/lib/format'
 
 function useWide(query = '(min-width: 1180px)') {
   const [wide, setWide] = useState(() => window.matchMedia(query).matches)
@@ -107,6 +108,7 @@ function RequisitionView({ id }: { id: number }) {
 
 function Header({ r, onPdf }: { r: ReqDetail; onPdf: () => void }) {
   const [rejectOpen, setRejectOpen] = useState(false)
+  const [mergeOpen, setMergeOpen] = useState(false)
   const submit = useReqAction(r.id, () => api.post<ReqDetail>(`/requisitions/${r.id}/submit`), (d) =>
     d.state === 'PENDING_APPROVAL' ? `Sent to ${d.current_step?.approver_name}` : 'Still needs review',
   )
@@ -116,7 +118,7 @@ function Header({ r, onPdf }: { r: ReqDetail; onPdf: () => void }) {
     return api.get<ReqDetail>(`/requisitions/${r.id}`)
   }, 'Processing again')
   const blocking = r.issue_counts.blocking
-  const hasPdf = r.email.attachments.some((a) => a.content_type === 'application/pdf')
+  const hasPdf = allAttachments(r).some((a) => a.content_type === 'application/pdf')
   const active = r.steps.find((s) => s.status === 'active')
   const navigate = useNavigate()
   const location = useLocation()
@@ -175,6 +177,13 @@ function Header({ r, onPdf }: { r: ReqDetail; onPdf: () => void }) {
             </Button>
           )}
           {['NEEDS_REVIEW', 'PENDING_APPROVAL'].includes(r.state) && (
+            <Tip content="This email belongs to another requisition: copy what it states there and close this one.">
+              <Button variant="ghost" onClick={() => setMergeOpen(true)}>
+                <GitMerge size={13} /> Merge into…
+              </Button>
+            </Tip>
+          )}
+          {['NEEDS_REVIEW', 'PENDING_APPROVAL'].includes(r.state) && (
             <Button variant="danger" onClick={() => setRejectOpen(true)}>
               Reject
             </Button>
@@ -216,7 +225,74 @@ function Header({ r, onPdf }: { r: ReqDetail; onPdf: () => void }) {
         {r.steps_are_preview && r.steps.length > 0 && r.state === 'NEEDS_REVIEW' && <p className="mt-1 text-[12px] text-muted">The approvers shown are the chain this requisition will get once it is sent.</p>}
       </div>
       <RejectDialog r={r} open={rejectOpen} onOpenChange={setRejectOpen} />
+      {mergeOpen && <MergeDialog r={r} onOpenChange={setMergeOpen} />}
     </header>
+  )
+}
+
+const MERGEABLE_INTO = ['NEEDS_REVIEW', 'PENDING_APPROVAL', 'APPROVED', 'REJECTED']
+
+/** Pick the requisition this email belongs to. The likely ones first: the linked one, then the same requester's. */
+function MergeDialog({ r, onOpenChange }: { r: ReqDetail; onOpenChange: (v: boolean) => void }) {
+  const [q, setQ] = useState('')
+  const { data } = useRequisitions()
+  const navigate = useNavigate()
+  const qc = useQueryClient()
+  const merge = useReqAction(r.id, (public_id: string) => api.post<ReqDetail>(`/requisitions/${r.id}/merge`, { public_id }), (d) => `Merged into ${d.linked_to_public_id}`)
+
+  const candidates = useMemo(() => {
+    const needle = q.trim().toLowerCase()
+    const rank = (x: { id: number; requester_id: string | null }) => (x.id === r.linked_to_id ? 0 : x.requester_id && x.requester_id === r.requester_id ? 1 : 2)
+    return (data ?? [])
+      .filter((x) => x.id !== r.id && x.linked_to_id !== r.id && MERGEABLE_INTO.includes(x.state))
+      .filter((x) => !needle || [x.public_id, x.title, x.requester_name, x.supplier_name ?? x.supplier_name_doc].some((v) => v?.toLowerCase().includes(needle)))
+      .sort((a, b) => rank(a) - rank(b) || b.received_at.localeCompare(a.received_at))
+      .slice(0, 8)
+  }, [data, q, r.id, r.linked_to_id, r.requester_id])
+
+  return (
+    <Dialog
+      open
+      onOpenChange={onOpenChange}
+      width={560}
+      title={`Merge ${r.public_id} into another requisition`}
+      description="What this email states (supplier, cost center, dates, line items) is copied onto the one you pick, and its email and attachments become part of that requisition's source. This one is closed; the other one's approval chain starts again."
+    >
+      <Input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search by ID, title, requester or supplier" aria-label="Search requisitions" />
+      <ul className="mt-3 max-h-[340px] divide-y divide-hairline overflow-y-auto rounded-lg text-[12.5px] shadow-[0_0_0_0.5px_var(--color-hairline-strong)]">
+        {candidates.map((x) => (
+          <li key={x.id} className="flex items-center gap-3 px-3 py-2">
+            <div className="min-w-0 flex-1">
+              <p className="truncate">
+                <span className="num font-medium">{x.public_id}</span> <span className="text-ink">{x.title || x.source_name}</span>
+                {x.id === r.linked_to_id && <span className="text-accent"> (linked)</span>}
+              </p>
+              <p className="truncate text-[12px] text-muted">
+                {[x.requester_name, x.supplier_name ?? x.supplier_name_doc, date(x.sent_at ?? x.received_at)].filter(Boolean).join(', ')}
+                {x.po_total && <span className="num">, {money(x.po_total, x.currency)}</span>}
+              </p>
+            </div>
+            <StatePill state={x.state} stage={x.stage} />
+            <Button
+              size="sm"
+              onClick={() =>
+                merge.mutate(x.public_id, {
+                  onSuccess: () => {
+                    qc.invalidateQueries({ queryKey: keys.detail(x.id) })
+                    onOpenChange(false)
+                    navigate(`/r/${x.id}`)
+                  },
+                })
+              }
+              loading={merge.isPending && merge.variables === x.public_id}
+            >
+              Merge into this
+            </Button>
+          </li>
+        ))}
+        {candidates.length === 0 && <li className="px-3 py-4 text-center text-muted">No open requisition matches.</li>}
+      </ul>
+    </Dialog>
   )
 }
 

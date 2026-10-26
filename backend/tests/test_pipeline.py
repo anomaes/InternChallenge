@@ -171,6 +171,39 @@ def test_resend_is_linked_and_applied_as_correction(client):
     assert d["state"] == "CLOSED_DUPLICATE"
     orig = get(client, first)
     assert orig["state"] == "PENDING_APPROVAL" and orig["po_total"] == "1751.40"
+    # The resend's email and PDF are now part of the original's source.
+    [m] = orig["merged_emails"]
+    assert m["requisition_id"] == second and m["link_type"] == "correction"
+    assert [a["filename"] for a in m["email"]["attachments"]] == ["quote_acme_bearings.pdf"]
+    assert "attachment_missing" not in open_codes(orig, "warning")
+
+
+def test_closed_duplicate_is_not_part_of_the_original(client):
+    client.post("/api/demo/reset")
+    first = deliver("email_01_clean_with_pdf.eml")
+    second = deliver("email_29.eml")
+    client.post(f"/api/requisitions/{second}/duplicate", json={"action": "close"})
+    orig = get(client, first)
+    assert orig["merged_emails"] == [] and "attachment_missing" in open_codes(orig, "warning")
+
+
+def test_clerk_merges_a_requisition_into_another(client):
+    client.post("/api/demo/reset")
+    first = deliver("email_01_clean_with_pdf.eml")
+    second = deliver("email_29.eml")
+    target = get(client, first)["public_id"]
+    d = client.post(f"/api/requisitions/{second}/merge", json={"public_id": target}).json()
+    assert d["state"] == "CLOSED_DUPLICATE" and d["link_type"] == "merged"
+    assert "suspected_duplicate" not in open_codes(d)
+    orig = get(client, first)
+    assert orig["po_total"] == "1751.40" and orig["state"] == "PENDING_APPROVAL"
+    assert [m["requisition_id"] for m in orig["merged_emails"]] == [second]
+    assert any(e["kind"] == "merged" for e in orig["events"])
+    # Closed now, so it can't be merged again; and nothing merges into itself.
+    again = client.post(f"/api/requisitions/{second}/merge", json={"public_id": target})
+    assert again.status_code == 409
+    itself = client.post(f"/api/requisitions/{first}/merge", json={"public_id": target})
+    assert itself.status_code == 404
 
 
 def test_unknown_supplier_created_by_clerk(client):

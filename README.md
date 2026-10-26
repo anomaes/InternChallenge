@@ -110,8 +110,7 @@ into a review case. `gpt-6-luna` matched the hand-checked results most closely a
 among the cheapest. Its one difference is arguably an improvement: it reads email_04's
 "bitte das übliche, gleicher Lieferant wie immer" as a repeat of an earlier order. The
 48 emails took about 162k input and 51k output tokens, about 12 s per email. Caveat:
-this is one full run per model; the repeat runs that would show run-to-run stability
-were cut short when the API credits ran out.
+this is one full run per model, so it doesn't show run-to-run stability.
 
 **Decision checks** (a switch on the simulator page, off by default): after extraction the
 OpenAI Decisions API (`gpt-6-luna`) rates predicates such as *"The document lists 'Cable

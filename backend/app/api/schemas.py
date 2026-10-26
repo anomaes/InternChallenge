@@ -178,6 +178,15 @@ class EmailOut(BaseModel):
     attachments: list[AttachmentOut]
 
 
+class MergedEmailOut(BaseModel):
+    """An email merged into this requisition from another one (its requisition is closed)."""
+
+    requisition_id: int
+    public_id: str
+    link_type: str
+    email: EmailOut
+
+
 class RedactionOut(BaseModel):
     kind: str
     placeholder: str
@@ -296,6 +305,7 @@ class ReqDetail(ReqSummary):
     steps_are_preview: bool
     step_history: list[StepOut]
     email: EmailOut
+    merged_emails: list[MergedEmailOut]  # oldest first; part of the source alongside `email`
     events: list[EventOut]
     llm_runs: list[LLMRunOut]
     purchase_orders: list[PurchaseOrderOut]

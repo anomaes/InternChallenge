@@ -23,6 +23,7 @@ from app.domain.matching import (
     supplier_status_findings,
 )
 from app.domain.reconcile import LineIn, StatedTotalIn, fmt, reconcile, to_chf
+from app.domain.workflow import State
 from app.services.settings_store import get_setting
 
 # Values whose doubt blocks routing; doubt on anything else only warns.
@@ -84,6 +85,34 @@ def lines_of(session: Session, req: Requisition) -> list[LineItem]:
     )
 
 
+# Link types of a closed requisition whose content was copied into the one it links to.
+MERGED_LINKS = ("correction", "merged")
+
+
+def merged_into(session: Session, req: Requisition) -> list[Requisition]:
+    """Requisitions merged into this one (applied corrections and clerk merges, also merged
+    in turn), oldest first. Their emails and attachments are part of this one's source."""
+    out: dict[int, Requisition] = {}
+    frontier = [req.id]
+    while frontier:
+        found = session.exec(
+            select(Requisition).where(
+                Requisition.linked_to_id.in_(frontier),  # type: ignore[union-attr]
+                Requisition.state == State.CLOSED_DUPLICATE,
+                Requisition.link_type.in_(MERGED_LINKS),  # type: ignore[union-attr]
+            )
+        ).all()
+        new = [r for r in found if r.id not in out and r.id != req.id]
+        out.update({r.id: r for r in new})  # type: ignore[misc]
+        frontier = [r.id for r in new]
+    return sorted(out.values(), key=lambda r: r.id)  # type: ignore[arg-type,return-value]
+
+
+def source_email_ids(session: Session, req: Requisition) -> list[int]:
+    """This requisition's own email first, then those merged into it."""
+    return [req.email_id, *(r.email_id for r in merged_into(session, req))]
+
+
 def evaluate(session: Session, req: Requisition, md: MasterData | None = None) -> Evaluation:
     md = md or MasterData.load(session)
     ev = Evaluation()
@@ -104,7 +133,11 @@ def evaluate(session: Session, req: Requisition, md: MasterData | None = None) -
     if (
         email
         and _mentions_attachment(email.body_text)
-        and not session.exec(select(Attachment.id).where(Attachment.email_id == email.id)).first()
+        and not session.exec(
+            select(Attachment.id).where(
+                Attachment.email_id.in_(source_email_ids(session, req))  # type: ignore[attr-defined]
+            )
+        ).first()
     ):
         f.append(
             Finding(

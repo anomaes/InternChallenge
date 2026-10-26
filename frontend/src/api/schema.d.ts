@@ -184,6 +184,29 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/requisitions/{req_id}/merge": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Merge
+         * @description Merge this requisition's email into another requisition, picked by the clerk: what it
+         *     states is copied over (as a correction is), its email and attachments join the target's
+         *     source, and this one is closed. For a resend with the attachment, a follow-up that adds
+         *     the missing details, and so on, whether or not it was detected as a duplicate.
+         */
+        post: operations["merge_api_requisitions__req_id__merge_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/requisitions/{req_id}/link": {
         parameters: {
             query?: never;
@@ -1078,6 +1101,19 @@ export interface components {
                 [key: string]: string;
             };
         };
+        /**
+         * MergedEmailOut
+         * @description An email merged into this requisition from another one (its requisition is closed).
+         */
+        MergedEmailOut: {
+            /** Requisition Id */
+            requisition_id: number;
+            /** Public Id */
+            public_id: string;
+            /** Link Type */
+            link_type: string;
+            email: components["schemas"]["EmailOut"];
+        };
         /** NoteIn */
         NoteIn: {
             /** Note */
@@ -1358,6 +1394,8 @@ export interface components {
             /** Step History */
             step_history: components["schemas"]["StepOut"][];
             email: components["schemas"]["EmailOut"];
+            /** Merged Emails */
+            merged_emails: components["schemas"]["MergedEmailOut"][];
             /** Events */
             events: components["schemas"]["EventOut"][];
             /** Llm Runs */
@@ -2021,6 +2059,41 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["DuplicateActionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReqDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    merge_api_requisitions__req_id__merge_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                req_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LinkIn"];
             };
         };
         responses: {

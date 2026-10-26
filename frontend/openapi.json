@@ -581,6 +581,59 @@
     }
    }
   },
+  "/api/requisitions/{req_id}/merge": {
+   "post": {
+    "tags": [
+     "requisitions"
+    ],
+    "summary": "Merge",
+    "description": "Merge this requisition's email into another requisition, picked by the clerk: what it\nstates is copied over (as a correction is), its email and attachments join the target's\nsource, and this one is closed. For a resend with the attachment, a follow-up that adds\nthe missing details, and so on, whether or not it was detected as a duplicate.",
+    "operationId": "merge_api_requisitions__req_id__merge_post",
+    "parameters": [
+     {
+      "name": "req_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Req Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/LinkIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ReqDetail"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/api/requisitions/{req_id}/link": {
    "post": {
     "tags": [
@@ -2794,6 +2847,34 @@
     ],
     "title": "MasterOut"
    },
+   "MergedEmailOut": {
+    "properties": {
+     "requisition_id": {
+      "type": "integer",
+      "title": "Requisition Id"
+     },
+     "public_id": {
+      "type": "string",
+      "title": "Public Id"
+     },
+     "link_type": {
+      "type": "string",
+      "title": "Link Type"
+     },
+     "email": {
+      "$ref": "#/components/schemas/EmailOut"
+     }
+    },
+    "type": "object",
+    "required": [
+     "requisition_id",
+     "public_id",
+     "link_type",
+     "email"
+    ],
+    "title": "MergedEmailOut",
+    "description": "An email merged into this requisition from another one (its requisition is closed)."
+   },
    "NoteIn": {
     "properties": {
      "note": {
@@ -3885,6 +3966,13 @@
      "email": {
       "$ref": "#/components/schemas/EmailOut"
      },
+     "merged_emails": {
+      "items": {
+       "$ref": "#/components/schemas/MergedEmailOut"
+      },
+      "type": "array",
+      "title": "Merged Emails"
+     },
      "events": {
       "items": {
        "$ref": "#/components/schemas/EventOut"
@@ -4019,6 +4107,7 @@
      "steps_are_preview",
      "step_history",
      "email",
+     "merged_emails",
      "events",
      "llm_runs",
      "purchase_orders",

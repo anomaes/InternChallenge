@@ -1,5 +1,6 @@
-import { FileText, Mail, ShieldOff, Sparkles } from 'lucide-react'
+import { FileText, GitMerge, Mail, ShieldOff, Sparkles } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { Link } from 'react-router-dom'
 import type { ReqDetail } from '@/api/client'
 import { cn, dateTime } from '@/lib/format'
 import { Badge } from './ui'
@@ -121,6 +122,11 @@ export function SourceSections({
   ))
 }
 
+/** Attachments of the requisition's own email and of the emails merged into it. */
+export const allAttachments = (r: ReqDetail) => [r.email, ...r.merged_emails.map((m) => m.email)].flatMap((e) => e.attachments)
+
+const bodySections = (sourceText: string) => sourceSections(sourceText).filter((s) => !s.title.startsWith('EMAIL HEADERS'))
+
 /** The labelled source the model saw, split into its sections, with evidence highlighted. */
 export function SourcePanel({
   r,
@@ -137,7 +143,8 @@ export function SourcePanel({
 }) {
   const scroller = useRef<HTMLDivElement>(null)
   const [showRedacted, setShowRedacted] = useState(false)
-  const sections = useMemo(() => sourceSections(r.email.source_text).filter((s) => !s.title.startsWith('EMAIL HEADERS')), [r.email.source_text])
+  const sections = useMemo(() => bodySections(r.email.source_text), [r.email.source_text])
+  const merged = useMemo(() => r.merged_emails.map((m) => ({ ...m, sections: bodySections(m.email.source_text) })), [r.merged_emails])
 
   useEffect(() => {
     if (!active || tab !== 'email') return
@@ -149,7 +156,7 @@ export function SourcePanel({
     if (showRedacted) scroller.current?.querySelector('mark.redacted')?.scrollIntoView({ block: 'center', behavior: 'smooth' })
   }, [showRedacted])
 
-  const pdfs = r.email.attachments.filter((a) => a.content_type === 'application/pdf')
+  const pdfs = allAttachments(r).filter((a) => a.content_type === 'application/pdf')
   const lastRun = [...r.llm_runs].reverse().find((x) => x.kind === 'extract' && x.raw_output)
   const pdfIndex = tab.startsWith('pdf-') ? Number(tab.slice(4)) : -1
 
@@ -174,16 +181,7 @@ export function SourcePanel({
       {tab === 'email' && (
         <div ref={scroller} className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
           <div className="mb-4 space-y-0.5 text-[12.5px]">
-            <p>
-              <span className="text-muted">From </span>
-              {r.email.from_name} <span className="text-muted">&lt;{r.email.from_email}&gt;</span>
-            </p>
-            <p>
-              <span className="text-muted">Sent </span>
-              {dateTime(r.email.sent_at)}
-              <span className="text-muted"> as </span>
-              {r.email.source_name}
-            </p>
+            <EmailMeta email={r.email} />
             {r.redaction_count > 0 && (
               <p className="pt-1.5">
                 <button onClick={() => setShowRedacted((v) => !v)} aria-pressed={showRedacted} className="rounded-full transition-opacity hover:opacity-80">
@@ -212,6 +210,21 @@ export function SourcePanel({
             )}
           </div>
           <SourceSections sections={sections} evidence={evidence} active={active} redacted={showRedacted ? r.redactions : NONE} />
+          {merged.map((m) => (
+            <div key={m.requisition_id} className="mt-6 border-t border-hairline pt-4">
+              <div className="mb-4 space-y-0.5 text-[12.5px]">
+                <p className="mb-1.5 flex items-center gap-1.5 font-medium text-accent">
+                  <GitMerge size={13} />
+                  {m.link_type === 'correction' ? 'Applied as a correction from ' : 'Merged in from '}
+                  <Link to={`/r/${m.requisition_id}`} className="num hover:underline">
+                    {m.public_id}
+                  </Link>
+                </p>
+                <EmailMeta email={m.email} />
+              </div>
+              <SourceSections sections={m.sections} evidence={evidence} active={active} redacted={showRedacted ? r.redactions : NONE} />
+            </div>
+          ))}
         </div>
       )}
 
@@ -231,6 +244,23 @@ export function SourcePanel({
         </div>
       )}
     </div>
+  )
+}
+
+function EmailMeta({ email }: { email: ReqDetail['email'] }) {
+  return (
+    <>
+      <p>
+        <span className="text-muted">From </span>
+        {email.from_name} <span className="text-muted">&lt;{email.from_email}&gt;</span>
+      </p>
+      <p>
+        <span className="text-muted">Sent </span>
+        {dateTime(email.sent_at)}
+        <span className="text-muted"> as </span>
+        {email.source_name}
+      </p>
+    </>
   )
 }
 
