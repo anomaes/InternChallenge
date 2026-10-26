@@ -1,0 +1,7 @@
+{
+ "raw": "{\"message_kind\":\"new_request\",\"summary\":\"Office chairs and rolling cabinets\",\"supplier_name\":\"Office Plus Schweiz\",\"supplier_name_quote\":\"Office Plus Schweiz\",\"supplier_vat_id\":null,\"supplier_address\":null,\"currency\":null,\"line_items\":[{\"kind\":\"item\",\"description\":\"Buerodrehstuhl\",\"item_code\":null,\"quantity\":4.0,\"quantity_is_approximate\":false,\"unit\":null,\"unit_price\":null,\"price_basis\":null,\"stated_line_total\":null,\"source_quote\":\"4 Buerodrehstuhl\"},{\"kind\":\"item\",\"description\":\"Rollcontainer\",\"item_code\":null,\"quantity\":4.0,\"quantity_is_approximate\":false,\"unit\":null,\"unit_price\":null,\"price_basis\":null,\"stated_line_total\":null,\"source_quote\":\"4 Rollcontainer\"}],\"stated_totals\":[],\"vat_amount\":null,\"vat_rate_percent\":null,\"cost_center_code\":\"CC-3003\",\"cost_center_text\":null,\"cost_center_quote\":\"Kostenstelle CC-3003.\",\"delivery_date_text\":null,\"delivery_date_iso\":null,\"quote_reference\":null,\"quote_date_iso\":null,\"quote_valid_until_iso\":null,\"referenced_requests\":[],\"on_behalf_of\":null,\"claims_prior_approval\":false,\"prior_approval_quote\":null,\"gl_account_suggestion\":\"7100\",\"gl_account_reason\":\"Office chairs and rolling cabinets are office supplies.\",\"notes_for_clerk\":[\"Requester has no prices; asks purchasing to request prices.\"]}",
+ "model": "gpt-6-luna",
+ "latency_ms": 5805,
+ "input_tokens": 3175,
+ "output_tokens": 418
+}

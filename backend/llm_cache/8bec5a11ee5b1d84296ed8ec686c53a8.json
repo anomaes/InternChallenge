@@ -1,0 +1,7 @@
+{
+ "raw": "{\"message_kind\":\"correction\",\"summary\":\"Quantity correction to prior request\",\"supplier_name\":null,\"supplier_name_quote\":null,\"supplier_vat_id\":null,\"supplier_address\":null,\"currency\":null,\"line_items\":[],\"stated_totals\":[],\"vat_amount\":null,\"vat_rate_percent\":null,\"cost_center_code\":null,\"cost_center_text\":null,\"cost_center_quote\":null,\"delivery_date_text\":null,\"delivery_date_iso\":null,\"quote_reference\":null,\"quote_date_iso\":null,\"quote_valid_until_iso\":null,\"referenced_requests\":[],\"on_behalf_of\":null,\"claims_prior_approval\":false,\"prior_approval_quote\":null,\"gl_account_suggestion\":null,\"gl_account_reason\":null,\"notes_for_clerk\":[\"The previous request quantity is corrected from 120 to 12; the rest remains as discussed.\"]}",
+ "model": "gpt-6-luna",
+ "latency_ms": 5254,
+ "input_tokens": 3156,
+ "output_tokens": 376
+}

@@ -1,1 +1,152 @@
 @import "tailwindcss";
+
+/* Design tokens. Light theme only (decision 8). One accent, "signature ink";
+   state colours are used for state and nothing else. */
+@theme {
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", system-ui, sans-serif;
+
+  --color-canvas: #f5f5f7;
+  --color-surface: #ffffff;
+  --color-sunken: #fafafb;
+  --color-ink: #1d1d1f;
+  --color-ink-2: #424245;
+  --color-muted: #6e6e73;
+  --color-faint: #a1a1a6;
+  --color-hairline: #e2e2e7;
+  --color-hairline-strong: #d2d2d7;
+
+  --color-accent: #2b4bcf;
+  --color-accent-hover: #2340b4;
+  --color-accent-soft: #eef1fc;
+  --color-accent-line: #c9d3f5;
+
+  --color-review: #a35a00;
+  --color-review-soft: #fff5e6;
+  --color-review-line: #f6d9a8;
+  --color-good: #1e7a4c;
+  --color-good-soft: #eaf6ef;
+  --color-good-line: #bfe3cd;
+  --color-bad: #c0352b;
+  --color-bad-soft: #fdeeec;
+  --color-bad-line: #f4c6c1;
+
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: 1rem;
+
+  --radius-control: 8px;
+  --radius-panel: 14px;
+
+  --shadow-panel: 0 0 0 0.5px rgb(0 0 0 / 0.06), 0 1px 2px rgb(0 0 0 / 0.04), 0 4px 16px -8px rgb(0 0 0 / 0.08);
+  --shadow-pop: 0 0 0 0.5px rgb(0 0 0 / 0.08), 0 8px 28px -6px rgb(0 0 0 / 0.18);
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-size: 14px;
+    line-height: 1.45;
+    letter-spacing: -0.006em;
+  }
+  ::selection {
+    background: var(--color-accent-line);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  h1,
+  h2,
+  h3 {
+    letter-spacing: -0.018em;
+  }
+  .num {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* Evidence highlight inside the source view. */
+mark.evidence {
+  background: color-mix(in srgb, var(--color-accent) 16%, transparent);
+  color: inherit;
+  border-radius: 3px;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent) 16%, transparent);
+}
+mark.evidence.active {
+  background: color-mix(in srgb, var(--color-accent) 30%, transparent);
+  box-shadow: 0 0 0 2px var(--color-accent);
+}
+
+/* A value the AI never saw; the tag shows the placeholder it got instead. */
+mark.redacted {
+  background: var(--color-bad-soft);
+  color: inherit;
+  border-radius: 3px;
+  box-shadow: 0 0 0 2px var(--color-bad-line);
+}
+mark.redacted::after {
+  content: attr(data-placeholder);
+  margin-left: 6px;
+  padding: 0 4px;
+  border-radius: 3px;
+  background: var(--color-bad);
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+  vertical-align: 1px;
+}
+
+/* The same value where the reader isn't meant to see it. */
+mark.masked {
+  padding: 0 5px;
+  border-radius: 4px;
+  background: var(--color-sunken);
+  box-shadow: 0 0 0 0.5px var(--color-hairline-strong);
+  color: var(--color-muted);
+  font-size: 0.92em;
+  font-style: italic;
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+.pulse-dot {
+  animation: pulse-dot 1.4s ease-in-out infinite;
+}
+@keyframes shimmer {
+  from {
+    background-position: -200px 0;
+  }
+  to {
+    background-position: 200px 0;
+  }
+}
+.skeleton {
+  background: linear-gradient(90deg, #ececf0 0px, #f6f6f8 100px, #ececf0 200px);
+  background-size: 400px 100%;
+  animation: shimmer 1.2s linear infinite;
+  border-radius: 6px;
+}

@@ -1,0 +1,8 @@
+{
+ "probabilities": {
+  "supplier": 0.99
+ },
+ "model": "gpt-6-luna",
+ "latency_ms": 513,
+ "input_tokens": 282
+}

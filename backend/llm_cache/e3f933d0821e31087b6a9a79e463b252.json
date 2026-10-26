@@ -1,0 +1,7 @@
+{
+ "raw": "{\"message_kind\":\"new_request\",\"summary\":\"Contactor combinations for production line\",\"supplier_name\":\"Elektro Buehler\",\"supplier_name_quote\":\"bei Elektro Buehler bestellen\",\"supplier_vat_id\":null,\"supplier_address\":null,\"currency\":\"CHF\",\"line_items\":[{\"kind\":\"item\",\"description\":\"Schuetzkombination\",\"item_code\":\"SK-12\",\"quantity\":7.0,\"quantity_is_approximate\":false,\"unit\":\"Stk\",\"unit_price\":143.0,\"price_basis\":null,\"stated_line_total\":1001.0,\"source_quote\":\"bitte 7 Stk Schuetzkombination SK-12 bei Elektro Buehler bestellen, je CHF 143.00.\\nTotal CHF 1'001.00.\"}],\"stated_totals\":[{\"label\":\"Total\",\"amount\":1001.0,\"includes_vat\":\"unclear\",\"is_approximate\":false,\"source\":\"email\",\"source_quote\":\"Total CHF 1'001.00.\"}],\"vat_amount\":null,\"vat_rate_percent\":null,\"cost_center_code\":\"CC-1002\",\"cost_center_text\":null,\"cost_center_quote\":\"Kostenstelle CC-1002.\",\"delivery_date_text\":\"Bis Ende Mai bitte.\",\"delivery_date_iso\":null,\"quote_reference\":null,\"quote_date_iso\":null,\"quote_valid_until_iso\":null,\"referenced_requests\":[],\"on_behalf_of\":null,\"claims_prior_approval\":false,\"prior_approval_quote\":null,\"gl_account_suggestion\":\"5300\",\"gl_account_reason\":\"The Schuetzkombination is a part ordered for a production line.\",\"notes_for_clerk\":[]}",
+ "model": "gpt-6-luna",
+ "latency_ms": 9050,
+ "input_tokens": 3180,
+ "output_tokens": 729
+}

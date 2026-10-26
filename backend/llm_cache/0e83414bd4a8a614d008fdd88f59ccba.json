@@ -1,0 +1,7 @@
+{
+ "raw": "{\"message_kind\":\"new_request\",\"summary\":\"Inductive proximity sensors\",\"supplier_name\":\"Sensorik Nord\",\"supplier_name_quote\":\"from Sensorik Nord\",\"supplier_vat_id\":null,\"supplier_address\":null,\"currency\":\"EUR\",\"line_items\":[{\"kind\":\"item\",\"description\":\"Inductive proximity sensors, Type IN-M12\",\"item_code\":\"IN-M12\",\"quantity\":10.0,\"quantity_is_approximate\":true,\"unit\":null,\"unit_price\":null,\"price_basis\":null,\"stated_line_total\":null,\"source_quote\":\"roughly ten inductive proximity sensors from Sensorik Nord for the test bench? Type IN-M12\"}],\"stated_totals\":[{\"label\":\"whole lot\",\"amount\":5000.0,\"includes_vat\":\"unclear\",\"is_approximate\":true,\"source\":\"email\",\"source_quote\":\"the whole lot comes to around five thousand euros, give or take.\"}],\"vat_amount\":null,\"vat_rate_percent\":null,\"cost_center_code\":\"CC-2002\",\"cost_center_text\":null,\"cost_center_quote\":\"Cost center CC-2002.\",\"delivery_date_text\":null,\"delivery_date_iso\":null,\"quote_reference\":null,\"quote_date_iso\":null,\"quote_valid_until_iso\":null,\"referenced_requests\":[],\"on_behalf_of\":null,\"claims_prior_approval\":false,\"prior_approval_quote\":null,\"gl_account_suggestion\":\"7400\",\"gl_account_reason\":\"Inductive proximity sensors for a test bench are lab and measurement equipment.\",\"notes_for_clerk\":[\"Requester says these are the ones used last time.\"]}",
+ "model": "gpt-6-luna",
+ "latency_ms": 9101,
+ "input_tokens": 3196,
+ "output_tokens": 777
+}

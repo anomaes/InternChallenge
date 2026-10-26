@@ -1,0 +1,10 @@
+{
+ "probabilities": {
+  "supplier": 1.0,
+  "currency": 0.96,
+  "cost_center": 1.0
+ },
+ "model": "gpt-6-luna",
+ "latency_ms": 296,
+ "input_tokens": 604
+}

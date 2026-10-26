@@ -1,0 +1,7 @@
+{
+ "raw": "{\"message_kind\":\"repeat\",\"summary\":\"Repeat earlier purchase request\",\"supplier_name\":null,\"supplier_name_quote\":null,\"supplier_vat_id\":null,\"supplier_address\":null,\"currency\":null,\"line_items\":[],\"stated_totals\":[],\"vat_amount\":null,\"vat_rate_percent\":null,\"cost_center_code\":\"CC-1002\",\"cost_center_text\":null,\"cost_center_quote\":\"Kostenstelle CC-1002.\",\"delivery_date_text\":null,\"delivery_date_iso\":null,\"quote_reference\":null,\"quote_date_iso\":null,\"quote_valid_until_iso\":null,\"referenced_requests\":[\"PR-2026-0412\"],\"on_behalf_of\":null,\"claims_prior_approval\":false,\"prior_approval_quote\":null,\"gl_account_suggestion\":null,\"gl_account_reason\":null,\"notes_for_clerk\":[]}",
+ "model": "gpt-6-luna",
+ "latency_ms": 4861,
+ "input_tokens": 3162,
+ "output_tokens": 296
+}

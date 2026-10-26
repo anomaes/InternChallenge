@@ -1,0 +1,5139 @@
+{
+ "openapi": "3.1.0",
+ "info": {
+  "title": "Purchase Requisition Automation",
+  "version": "0.1.0"
+ },
+ "paths": {
+  "/api/requisitions": {
+   "get": {
+    "tags": [
+     "requisitions"
+    ],
+    "summary": "List Requisitions",
+    "operationId": "list_requisitions_api_requisitions_get",
+    "parameters": [
+     {
+      "name": "state",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "State"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/ReqSummary"
+         },
+         "title": "Response List Requisitions Api Requisitions Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/requisitions/{req_id}": {
+   "get": {
+    "tags": [
+     "requisitions"
+    ],
+    "summary": "Get Requisition",
+    "operationId": "get_requisition_api_requisitions__req_id__get",
+    "parameters": [
+     {
+      "name": "req_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Req Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ReqDetail"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "patch": {
+    "tags": [
+     "requisitions"
+    ],
+    "summary": "Patch Fields",
+    "operationId": "patch_fields_api_requisitions__req_id__patch",
+    "parameters": [
+     {
+      "name": "req_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Req Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/FieldsPatch"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ReqDetail"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/requisitions/{req_id}/lines": {
+   "put": {
+    "tags": [
+     "requisitions"
+    ],
+    "summary": "Put Lines",
+    "operationId": "put_lines_api_requisitions__req_id__lines_put",
+    "parameters": [
+     {
+      "name": "req_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Req Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "array",
+        "items": {
+         "$ref": "#/components/schemas/LineIn"
+        },
+        "title": "Body"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ReqDetail"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/requisitions/{req_id}/confirm": {
+   "post": {
+    "tags": [
+     "requisitions"
+    ],
+    "summary": "Confirm Field",
+    "description": "Accept a suggested value, or vouch for an unverified one after checking the source.",
+    "operationId": "confirm_field_api_requisitions__req_id__confirm_post",
+    "parameters": [
+     {
+      "name": "req_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Req Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ConfirmIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ReqDetail"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/requisitions/{req_id}/stated-totals/{index}/override": {
+   "post": {
+    "tags": [
+     "requisitions"
+    ],
+    "summary": "Override Stated Total",
+    "description": "Resolve an amount conflict by deciding the lines are right and the printed figure is wrong.",
+    "operationId": "override_stated_total_api_requisitions__req_id__stated_totals__index__override_post",
+    "parameters": [
+     {
+      "name": "req_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Req Id"
+      }
+     },
+     {
+      "name": "index",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Index"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/NoteIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ReqDetail"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/requisitions/{req_id}/issues/{issue_id}/acknowledge": {
+   "post": {
+    "tags": [
+     "requisitions"
+    ],
+    "summary": "Acknowledge Issue",
+    "operationId": "acknowledge_issue_api_requisitions__req_id__issues__issue_id__acknowledge_post",
+    "parameters": [
+     {
+      "name": "req_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Req Id"
+      }
+     },
+     {
+      "name": "issue_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Issue Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/NoteIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ReqDetail"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/requisitions/{req_id}/approvers": {
+   "post": {
+    "tags": [
+     "requisitions"
+    ],
+    "summary": "Assign Approver",
+    "operationId": "assign_approver_api_requisitions__req_id__approvers_post",
+    "parameters": [
+     {
+      "name": "req_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Req Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/AssignApproverIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ReqDetail"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/requisitions/{req_id}/submit": {
+   "post": {
+    "tags": [
+     "requisitions"
+    ],
+    "summary": "Submit",
+    "description": "Send to approval (from Needs review), or resubmit a corrected rejected requisition.",
+    "operationId": "submit_api_requisitions__req_id__submit_post",
+    "parameters": [
+     {
+      "name": "req_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Req Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ReqDetail"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/requisitions/{req_id}/reject": {
+   "post": {
+    "tags": [
+     "requisitions"
+    ],
+    "summary": "Clerk Reject",
+    "operationId": "clerk_reject_api_requisitions__req_id__reject_post",
+    "parameters": [
+     {
+      "name": "req_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Req Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ReasonIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ReqDetail"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/requisitions/{req_id}/duplicate": {
+   "post": {
+    "tags": [
+     "requisitions"
+    ],
+    "summary": "Duplicate Action",
+    "operationId": "duplicate_action_api_requisitions__req_id__duplicate_post",
+    "parameters": [
+     {
+      "name": "req_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Req Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/DuplicateActionIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ReqDetail"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/requisitions/{req_id}/link": {
+   "post": {
+    "tags": [
+     "requisitions"
+    ],
+    "summary": "Link To",
+    "description": "For a correction that doesn't say which request it corrects: the clerk picks it.",
+    "operationId": "link_to_api_requisitions__req_id__link_post",
+    "parameters": [
+     {
+      "name": "req_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Req Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/LinkIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ReqDetail"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/requisitions/{req_id}/order": {
+   "post": {
+    "tags": [
+     "requisitions"
+    ],
+    "summary": "Order",
+    "operationId": "order_api_requisitions__req_id__order_post",
+    "parameters": [
+     {
+      "name": "req_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Req Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ReqDetail"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/requisitions/{req_id}/reprocess": {
+   "post": {
+    "tags": [
+     "requisitions"
+    ],
+    "summary": "Reprocess Requisition",
+    "operationId": "reprocess_requisition_api_requisitions__req_id__reprocess_post",
+    "parameters": [
+     {
+      "name": "req_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Req Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/OkOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/requisitions/{req_id}/rerun-checks": {
+   "post": {
+    "tags": [
+     "requisitions"
+    ],
+    "summary": "Rerun Checks",
+    "operationId": "rerun_checks_api_requisitions__req_id__rerun_checks_post",
+    "parameters": [
+     {
+      "name": "req_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Req Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ReqDetail"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/suppliers": {
+   "post": {
+    "tags": [
+     "requisitions"
+    ],
+    "summary": "Create Supplier",
+    "description": "Created by the clerk from an unknown-supplier issue, never from extraction alone.",
+    "operationId": "create_supplier_api_suppliers_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/SupplierCreateIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SupplierOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/approvers": {
+   "get": {
+    "tags": [
+     "approvers"
+    ],
+    "summary": "List Approvers",
+    "operationId": "list_approvers_api_approvers_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/ApproverOut"
+         },
+         "type": "array",
+         "title": "Response List Approvers Api Approvers Get"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/approvers/{employee_id}/queue": {
+   "get": {
+    "tags": [
+     "approvers"
+    ],
+    "summary": "Queue",
+    "operationId": "queue_api_approvers__employee_id__queue_get",
+    "parameters": [
+     {
+      "name": "employee_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Employee Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/QueueOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/requisitions/{req_id}/approve": {
+   "post": {
+    "tags": [
+     "approvers"
+    ],
+    "summary": "Approve",
+    "operationId": "approve_api_requisitions__req_id__approve_post",
+    "parameters": [
+     {
+      "name": "req_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Req Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/DecisionIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ReqDetail"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/requisitions/{req_id}/decline": {
+   "post": {
+    "tags": [
+     "approvers"
+    ],
+    "summary": "Decline",
+    "operationId": "decline_api_requisitions__req_id__decline_post",
+    "parameters": [
+     {
+      "name": "req_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Req Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/DecisionIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ReqDetail"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/master": {
+   "get": {
+    "tags": [
+     "system"
+    ],
+    "summary": "Master",
+    "operationId": "master_api_master_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/MasterOut"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/workflow": {
+   "get": {
+    "tags": [
+     "system"
+    ],
+    "summary": "Workflow",
+    "operationId": "workflow_api_workflow_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/WorkflowOut"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/dashboard": {
+   "get": {
+    "tags": [
+     "system"
+    ],
+    "summary": "Dashboard",
+    "operationId": "dashboard_api_dashboard_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DashboardOut"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/purchase-orders": {
+   "get": {
+    "tags": [
+     "system"
+    ],
+    "summary": "Purchase Orders",
+    "operationId": "purchase_orders_api_purchase_orders_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/PurchaseOrderOut"
+         },
+         "type": "array",
+         "title": "Response Purchase Orders Api Purchase Orders Get"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/attachments/{attachment_id}": {
+   "get": {
+    "tags": [
+     "system"
+    ],
+    "summary": "Attachment",
+    "operationId": "attachment_api_attachments__attachment_id__get",
+    "parameters": [
+     {
+      "name": "attachment_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Attachment Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/settings": {
+   "get": {
+    "tags": [
+     "system"
+    ],
+    "summary": "Get Settings",
+    "operationId": "get_settings_api_settings_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SettingsOut"
+        }
+       }
+      }
+     }
+    }
+   },
+   "put": {
+    "tags": [
+     "system"
+    ],
+    "summary": "Put Settings",
+    "operationId": "put_settings_api_settings_put",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/SettingsPatch"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SettingsOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/status": {
+   "get": {
+    "tags": [
+     "system"
+    ],
+    "summary": "Status",
+    "operationId": "status_api_status_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/StatusOut"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/outbox": {
+   "get": {
+    "tags": [
+     "system"
+    ],
+    "summary": "Outbox",
+    "operationId": "outbox_api_outbox_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/NotificationOut"
+         },
+         "type": "array",
+         "title": "Response Outbox Api Outbox Get"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/demo/samples": {
+   "get": {
+    "tags": [
+     "system"
+    ],
+    "summary": "Samples",
+    "operationId": "samples_api_demo_samples_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/SampleOut"
+         },
+         "type": "array",
+         "title": "Response Samples Api Demo Samples Get"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/demo/deliver": {
+   "post": {
+    "tags": [
+     "system"
+    ],
+    "summary": "Deliver",
+    "operationId": "deliver_api_demo_deliver_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/DeliverIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DeliveredOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/demo/deliver-next": {
+   "post": {
+    "tags": [
+     "system"
+    ],
+    "summary": "Deliver Next",
+    "operationId": "deliver_next_api_demo_deliver_next_post",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "anyOf": [
+          {
+           "$ref": "#/components/schemas/DeliveredOut"
+          },
+          {
+           "type": "null"
+          }
+         ],
+         "title": "Response Deliver Next Api Demo Deliver Next Post"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/demo/deliver-all": {
+   "post": {
+    "tags": [
+     "system"
+    ],
+    "summary": "Deliver All",
+    "operationId": "deliver_all_api_demo_deliver_all_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/DeliverAllIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/OkOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/demo/stop": {
+   "post": {
+    "tags": [
+     "system"
+    ],
+    "summary": "Stop Delivery",
+    "operationId": "stop_delivery_api_demo_stop_post",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/OkOut"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/demo/feeder": {
+   "get": {
+    "tags": [
+     "system"
+    ],
+    "summary": "Feeder State",
+    "operationId": "feeder_state_api_demo_feeder_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/OkOut"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/demo/upload": {
+   "post": {
+    "tags": [
+     "system"
+    ],
+    "summary": "Upload",
+    "description": "Raw .eml in the request body (keeps the dependency list short: no multipart parser).",
+    "operationId": "upload_api_demo_upload_post",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DeliveredOut"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/demo/reset": {
+   "post": {
+    "tags": [
+     "system"
+    ],
+    "summary": "Reset",
+    "operationId": "reset_api_demo_reset_post",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/OkOut"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/events": {
+   "get": {
+    "tags": [
+     "system"
+    ],
+    "summary": "Events",
+    "operationId": "events_api_events_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/health": {
+   "get": {
+    "summary": "Health",
+    "description": "Liveness of this API plus reachability of the mock ERP.",
+    "operationId": "health_api_health_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": {
+          "type": "string"
+         },
+         "type": "object",
+         "title": "Response Health Api Health Get"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "components": {
+  "schemas": {
+   "ApproverOut": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "role": {
+      "type": "string",
+      "title": "Role"
+     },
+     "role_label": {
+      "type": "string",
+      "title": "Role Label"
+     },
+     "pending": {
+      "type": "integer",
+      "title": "Pending"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "name",
+     "role",
+     "role_label",
+     "pending"
+    ],
+    "title": "ApproverOut"
+   },
+   "AssignApproverIn": {
+    "properties": {
+     "position": {
+      "type": "integer",
+      "title": "Position"
+     },
+     "employee_id": {
+      "type": "string",
+      "title": "Employee Id"
+     }
+    },
+    "type": "object",
+    "required": [
+     "position",
+     "employee_id"
+    ],
+    "title": "AssignApproverIn"
+   },
+   "AttachmentOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "filename": {
+      "type": "string",
+      "title": "Filename"
+     },
+     "content_type": {
+      "type": "string",
+      "title": "Content Type"
+     },
+     "size": {
+      "type": "integer",
+      "title": "Size"
+     },
+     "page_count": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Page Count"
+     },
+     "text": {
+      "type": "string",
+      "title": "Text"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "filename",
+     "content_type",
+     "size",
+     "page_count",
+     "text"
+    ],
+    "title": "AttachmentOut"
+   },
+   "AttentionGroup": {
+    "properties": {
+     "key": {
+      "type": "string",
+      "title": "Key"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "hint": {
+      "type": "string",
+      "title": "Hint"
+     },
+     "items": {
+      "items": {
+       "$ref": "#/components/schemas/ReqSummary"
+      },
+      "type": "array",
+      "title": "Items"
+     }
+    },
+    "type": "object",
+    "required": [
+     "key",
+     "title",
+     "hint",
+     "items"
+    ],
+    "title": "AttentionGroup"
+   },
+   "BandOut": {
+    "properties": {
+     "position": {
+      "type": "integer",
+      "title": "Position"
+     },
+     "lower": {
+      "type": "string",
+      "title": "Lower"
+     },
+     "upper": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Upper"
+     },
+     "required_roles": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Required Roles"
+     },
+     "role_labels": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Role Labels"
+     }
+    },
+    "type": "object",
+    "required": [
+     "position",
+     "lower",
+     "upper",
+     "required_roles",
+     "role_labels"
+    ],
+    "title": "BandOut"
+   },
+   "ConfirmIn": {
+    "properties": {
+     "field": {
+      "type": "string",
+      "title": "Field"
+     }
+    },
+    "type": "object",
+    "required": [
+     "field"
+    ],
+    "title": "ConfirmIn"
+   },
+   "CostCenterOut": {
+    "properties": {
+     "code": {
+      "type": "string",
+      "title": "Code"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "owner_employee_id": {
+      "type": "string",
+      "title": "Owner Employee Id"
+     },
+     "owner_name": {
+      "type": "string",
+      "title": "Owner Name"
+     },
+     "department": {
+      "type": "string",
+      "title": "Department"
+     },
+     "department_name": {
+      "type": "string",
+      "title": "Department Name"
+     },
+     "head_employee_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Head Employee Id"
+     },
+     "head_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Head Name"
+     }
+    },
+    "type": "object",
+    "required": [
+     "code",
+     "name",
+     "owner_employee_id",
+     "owner_name",
+     "department",
+     "department_name",
+     "head_employee_id",
+     "head_name"
+    ],
+    "title": "CostCenterOut"
+   },
+   "CostCenterSuggestion": {
+    "properties": {
+     "code": {
+      "type": "string",
+      "title": "Code"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "reason": {
+      "type": "string",
+      "title": "Reason"
+     }
+    },
+    "type": "object",
+    "required": [
+     "code",
+     "name",
+     "reason"
+    ],
+    "title": "CostCenterSuggestion"
+   },
+   "CurrentStep": {
+    "properties": {
+     "position": {
+      "type": "integer",
+      "title": "Position"
+     },
+     "total": {
+      "type": "integer",
+      "title": "Total"
+     },
+     "approver_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Approver Id"
+     },
+     "approver_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Approver Name"
+     }
+    },
+    "type": "object",
+    "required": [
+     "position",
+     "total",
+     "approver_id",
+     "approver_name"
+    ],
+    "title": "CurrentStep"
+   },
+   "DashboardOut": {
+    "properties": {
+     "counts": {
+      "additionalProperties": {
+       "type": "integer"
+      },
+      "type": "object",
+      "title": "Counts"
+     },
+     "groups": {
+      "items": {
+       "$ref": "#/components/schemas/AttentionGroup"
+      },
+      "type": "array",
+      "title": "Groups"
+     },
+     "recent": {
+      "items": {
+       "$ref": "#/components/schemas/ReqSummary"
+      },
+      "type": "array",
+      "title": "Recent"
+     }
+    },
+    "type": "object",
+    "required": [
+     "counts",
+     "groups",
+     "recent"
+    ],
+    "title": "DashboardOut"
+   },
+   "DecisionIn": {
+    "properties": {
+     "approver_id": {
+      "type": "string",
+      "title": "Approver Id"
+     },
+     "comment": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Comment"
+     }
+    },
+    "type": "object",
+    "required": [
+     "approver_id"
+    ],
+    "title": "DecisionIn"
+   },
+   "DeliverAllIn": {
+    "properties": {
+     "interval_s": {
+      "type": "number",
+      "title": "Interval S",
+      "default": 3.0
+     }
+    },
+    "type": "object",
+    "title": "DeliverAllIn"
+   },
+   "DeliverIn": {
+    "properties": {
+     "name": {
+      "type": "string",
+      "title": "Name"
+     }
+    },
+    "type": "object",
+    "required": [
+     "name"
+    ],
+    "title": "DeliverIn"
+   },
+   "DeliveredOut": {
+    "properties": {
+     "requisition_id": {
+      "type": "integer",
+      "title": "Requisition Id"
+     },
+     "public_id": {
+      "type": "string",
+      "title": "Public Id"
+     }
+    },
+    "type": "object",
+    "required": [
+     "requisition_id",
+     "public_id"
+    ],
+    "title": "DeliveredOut"
+   },
+   "DepartmentOut": {
+    "properties": {
+     "code": {
+      "type": "string",
+      "title": "Code"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "head_employee_id": {
+      "type": "string",
+      "title": "Head Employee Id"
+     },
+     "head_name": {
+      "type": "string",
+      "title": "Head Name"
+     }
+    },
+    "type": "object",
+    "required": [
+     "code",
+     "name",
+     "head_employee_id",
+     "head_name"
+    ],
+    "title": "DepartmentOut"
+   },
+   "DuplicateActionIn": {
+    "properties": {
+     "action": {
+      "type": "string",
+      "title": "Action"
+     },
+     "note": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Note"
+     }
+    },
+    "type": "object",
+    "required": [
+     "action"
+    ],
+    "title": "DuplicateActionIn"
+   },
+   "EmailOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "source_name": {
+      "type": "string",
+      "title": "Source Name"
+     },
+     "message_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Message Id"
+     },
+     "in_reply_to": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "In Reply To"
+     },
+     "from_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "From Name"
+     },
+     "from_email": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "From Email"
+     },
+     "to": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "To"
+     },
+     "subject": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Subject"
+     },
+     "sent_at": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date-time"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Sent At"
+     },
+     "received_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Received At"
+     },
+     "body_text": {
+      "type": "string",
+      "title": "Body Text"
+     },
+     "body_was_html": {
+      "type": "boolean",
+      "title": "Body Was Html"
+     },
+     "thread": {
+      "items": {
+       "$ref": "#/components/schemas/ThreadMessageOut"
+      },
+      "type": "array",
+      "title": "Thread"
+     },
+     "source_text": {
+      "type": "string",
+      "title": "Source Text"
+     },
+     "attachments": {
+      "items": {
+       "$ref": "#/components/schemas/AttachmentOut"
+      },
+      "type": "array",
+      "title": "Attachments"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "source_name",
+     "message_id",
+     "in_reply_to",
+     "from_name",
+     "from_email",
+     "to",
+     "subject",
+     "sent_at",
+     "received_at",
+     "body_text",
+     "body_was_html",
+     "thread",
+     "source_text",
+     "attachments"
+    ],
+    "title": "EmailOut"
+   },
+   "EventOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "At"
+     },
+     "actor": {
+      "type": "string",
+      "title": "Actor"
+     },
+     "actor_name": {
+      "type": "string",
+      "title": "Actor Name"
+     },
+     "kind": {
+      "type": "string",
+      "title": "Kind"
+     },
+     "message": {
+      "type": "string",
+      "title": "Message"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "at",
+     "actor",
+     "actor_name",
+     "kind",
+     "message"
+    ],
+    "title": "EventOut"
+   },
+   "FieldsPatch": {
+    "properties": {
+     "title": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Title"
+     },
+     "requester_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Requester Id"
+     },
+     "supplier_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Supplier Id"
+     },
+     "cost_center_code": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Cost Center Code"
+     },
+     "currency": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Currency"
+     },
+     "delivery_date": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Delivery Date"
+     },
+     "gl_account": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Gl Account"
+     },
+     "vat_amount": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Vat Amount"
+     },
+     "clear": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Clear",
+      "description": "Fields to set to null"
+     }
+    },
+    "type": "object",
+    "title": "FieldsPatch"
+   },
+   "HTTPValidationError": {
+    "properties": {
+     "detail": {
+      "items": {
+       "$ref": "#/components/schemas/ValidationError"
+      },
+      "type": "array",
+      "title": "Detail"
+     }
+    },
+    "type": "object",
+    "title": "HTTPValidationError"
+   },
+   "IssueCounts": {
+    "properties": {
+     "blocking": {
+      "type": "integer",
+      "title": "Blocking",
+      "default": 0
+     },
+     "warning": {
+      "type": "integer",
+      "title": "Warning",
+      "default": 0
+     },
+     "info": {
+      "type": "integer",
+      "title": "Info",
+      "default": 0
+     },
+     "order": {
+      "type": "integer",
+      "title": "Order",
+      "default": 0
+     }
+    },
+    "type": "object",
+    "title": "IssueCounts"
+   },
+   "IssueOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "code": {
+      "type": "string",
+      "title": "Code"
+     },
+     "severity": {
+      "type": "string",
+      "title": "Severity"
+     },
+     "blocks_order": {
+      "type": "boolean",
+      "title": "Blocks Order"
+     },
+     "field": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Field"
+     },
+     "message": {
+      "type": "string",
+      "title": "Message"
+     },
+     "details": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Details"
+     },
+     "origin": {
+      "type": "string",
+      "title": "Origin"
+     },
+     "status": {
+      "type": "string",
+      "title": "Status"
+     },
+     "resolved_by": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Resolved By"
+     },
+     "resolved_at": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date-time"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Resolved At"
+     },
+     "resolution_note": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Resolution Note"
+     },
+     "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Created At"
+     },
+     "acknowledgeable": {
+      "type": "boolean",
+      "title": "Acknowledgeable"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "code",
+     "severity",
+     "blocks_order",
+     "field",
+     "message",
+     "details",
+     "origin",
+     "status",
+     "resolved_by",
+     "resolved_at",
+     "resolution_note",
+     "created_at",
+     "acknowledgeable"
+    ],
+    "title": "IssueOut"
+   },
+   "LLMRunOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "kind": {
+      "type": "string",
+      "title": "Kind"
+     },
+     "model": {
+      "type": "string",
+      "title": "Model"
+     },
+     "prompt_version": {
+      "type": "string",
+      "title": "Prompt Version"
+     },
+     "attempt": {
+      "type": "integer",
+      "title": "Attempt"
+     },
+     "cached": {
+      "type": "boolean",
+      "title": "Cached"
+     },
+     "ok": {
+      "type": "boolean",
+      "title": "Ok"
+     },
+     "error": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Error"
+     },
+     "validation": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Validation"
+     },
+     "raw_output": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Raw Output"
+     },
+     "latency_ms": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Latency Ms"
+     },
+     "input_tokens": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Input Tokens"
+     },
+     "output_tokens": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Output Tokens"
+     },
+     "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Created At"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "kind",
+     "model",
+     "prompt_version",
+     "attempt",
+     "cached",
+     "ok",
+     "error",
+     "validation",
+     "raw_output",
+     "latency_ms",
+     "input_tokens",
+     "output_tokens",
+     "created_at"
+    ],
+    "title": "LLMRunOut"
+   },
+   "LineIn": {
+    "properties": {
+     "id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Id"
+     },
+     "kind": {
+      "type": "string",
+      "title": "Kind",
+      "default": "item"
+     },
+     "description": {
+      "type": "string",
+      "title": "Description"
+     },
+     "item_code": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Item Code"
+     },
+     "quantity": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Quantity"
+     },
+     "unit": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Unit"
+     },
+     "unit_price": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Unit Price"
+     },
+     "price_basis": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Price Basis"
+     }
+    },
+    "type": "object",
+    "required": [
+     "description"
+    ],
+    "title": "LineIn"
+   },
+   "LineOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "position": {
+      "type": "integer",
+      "title": "Position"
+     },
+     "kind": {
+      "type": "string",
+      "title": "Kind"
+     },
+     "description": {
+      "type": "string",
+      "title": "Description"
+     },
+     "item_code": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Item Code"
+     },
+     "quantity": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Quantity"
+     },
+     "quantity_approximate": {
+      "type": "boolean",
+      "title": "Quantity Approximate"
+     },
+     "unit": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Unit"
+     },
+     "unit_price": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Unit Price"
+     },
+     "price_basis": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Price Basis"
+     },
+     "stated_line_total": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Stated Line Total"
+     },
+     "line_value": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Line Value"
+     },
+     "source_quote": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Source Quote"
+     },
+     "provenance": {
+      "additionalProperties": {
+       "$ref": "#/components/schemas/Prov"
+      },
+      "type": "object",
+      "title": "Provenance"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "position",
+     "kind",
+     "description",
+     "item_code",
+     "quantity",
+     "quantity_approximate",
+     "unit",
+     "unit_price",
+     "price_basis",
+     "stated_line_total",
+     "line_value",
+     "source_quote",
+     "provenance"
+    ],
+    "title": "LineOut"
+   },
+   "LinkIn": {
+    "properties": {
+     "public_id": {
+      "type": "string",
+      "title": "Public Id"
+     }
+    },
+    "type": "object",
+    "required": [
+     "public_id"
+    ],
+    "title": "LinkIn"
+   },
+   "MasterOut": {
+    "properties": {
+     "suppliers": {
+      "items": {
+       "$ref": "#/components/schemas/SupplierOut"
+      },
+      "type": "array",
+      "title": "Suppliers"
+     },
+     "cost_centers": {
+      "items": {
+       "$ref": "#/components/schemas/CostCenterOut"
+      },
+      "type": "array",
+      "title": "Cost Centers"
+     },
+     "departments": {
+      "items": {
+       "$ref": "#/components/schemas/DepartmentOut"
+      },
+      "type": "array",
+      "title": "Departments"
+     },
+     "employees": {
+      "items": {
+       "$ref": "#/components/schemas/PersonOut"
+      },
+      "type": "array",
+      "title": "Employees"
+     },
+     "gl_accounts": {
+      "items": {
+       "additionalProperties": {
+        "type": "string"
+       },
+       "type": "object"
+      },
+      "type": "array",
+      "title": "Gl Accounts"
+     },
+     "approval_bands": {
+      "items": {
+       "$ref": "#/components/schemas/BandOut"
+      },
+      "type": "array",
+      "title": "Approval Bands"
+     },
+     "fx_rates": {
+      "additionalProperties": {
+       "type": "string"
+      },
+      "type": "object",
+      "title": "Fx Rates"
+     }
+    },
+    "type": "object",
+    "required": [
+     "suppliers",
+     "cost_centers",
+     "departments",
+     "employees",
+     "gl_accounts",
+     "approval_bands",
+     "fx_rates"
+    ],
+    "title": "MasterOut"
+   },
+   "NoteIn": {
+    "properties": {
+     "note": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Note"
+     }
+    },
+    "type": "object",
+    "title": "NoteIn"
+   },
+   "NotificationOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "requisition_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Requisition Id"
+     },
+     "recipient_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Recipient Id"
+     },
+     "recipient_label": {
+      "type": "string",
+      "title": "Recipient Label"
+     },
+     "subject": {
+      "type": "string",
+      "title": "Subject"
+     },
+     "body": {
+      "type": "string",
+      "title": "Body"
+     },
+     "link": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Link"
+     },
+     "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Created At"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "requisition_id",
+     "recipient_id",
+     "recipient_label",
+     "subject",
+     "body",
+     "link",
+     "created_at"
+    ],
+    "title": "NotificationOut"
+   },
+   "OkOut": {
+    "properties": {
+     "ok": {
+      "type": "boolean",
+      "title": "Ok",
+      "default": true
+     },
+     "message": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Message"
+     }
+    },
+    "type": "object",
+    "title": "OkOut"
+   },
+   "PersonOut": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "email": {
+      "type": "string",
+      "title": "Email"
+     },
+     "role": {
+      "type": "string",
+      "title": "Role"
+     },
+     "deputy_for": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Deputy For"
+     },
+     "default_cost_center": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Default Cost Center"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "name",
+     "email",
+     "role"
+    ],
+    "title": "PersonOut"
+   },
+   "Prov": {
+    "properties": {
+     "status": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Status"
+     },
+     "source": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Source"
+     },
+     "reason": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Reason"
+     },
+     "evidence": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Evidence"
+     },
+     "check": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Check"
+     },
+     "grounded": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Grounded"
+     }
+    },
+    "type": "object",
+    "title": "Prov"
+   },
+   "PurchaseOrderOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "requisition_id": {
+      "type": "integer",
+      "title": "Requisition Id"
+     },
+     "requisition_public_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Requisition Public Id"
+     },
+     "po_number": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Po Number"
+     },
+     "http_status": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Http Status"
+     },
+     "request": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Request"
+     },
+     "response": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Response"
+     },
+     "warnings": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Warnings"
+     },
+     "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Created At"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "requisition_id",
+     "po_number",
+     "http_status",
+     "request",
+     "response",
+     "warnings",
+     "created_at"
+    ],
+    "title": "PurchaseOrderOut"
+   },
+   "QueueItem": {
+    "properties": {
+     "requisition": {
+      "$ref": "#/components/schemas/ReqSummary"
+     },
+     "position": {
+      "type": "integer",
+      "title": "Position"
+     },
+     "total": {
+      "type": "integer",
+      "title": "Total"
+     },
+     "roles": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Roles"
+     },
+     "on_behalf_of_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "On Behalf Of Name"
+     },
+     "status": {
+      "type": "string",
+      "title": "Status"
+     }
+    },
+    "type": "object",
+    "required": [
+     "requisition",
+     "position",
+     "total",
+     "roles",
+     "on_behalf_of_name",
+     "status"
+    ],
+    "title": "QueueItem"
+   },
+   "QueueOut": {
+    "properties": {
+     "approver": {
+      "$ref": "#/components/schemas/PersonOut"
+     },
+     "pending": {
+      "items": {
+       "$ref": "#/components/schemas/QueueItem"
+      },
+      "type": "array",
+      "title": "Pending"
+     },
+     "upcoming": {
+      "items": {
+       "$ref": "#/components/schemas/QueueItem"
+      },
+      "type": "array",
+      "title": "Upcoming"
+     },
+     "decided": {
+      "items": {
+       "$ref": "#/components/schemas/QueueItem"
+      },
+      "type": "array",
+      "title": "Decided"
+     }
+    },
+    "type": "object",
+    "required": [
+     "approver",
+     "pending",
+     "upcoming",
+     "decided"
+    ],
+    "title": "QueueOut"
+   },
+   "ReasonIn": {
+    "properties": {
+     "reason": {
+      "type": "string",
+      "title": "Reason"
+     }
+    },
+    "type": "object",
+    "required": [
+     "reason"
+    ],
+    "title": "ReasonIn"
+   },
+   "RedactionOut": {
+    "properties": {
+     "kind": {
+      "type": "string",
+      "title": "Kind"
+     },
+     "placeholder": {
+      "type": "string",
+      "title": "Placeholder"
+     },
+     "original": {
+      "type": "string",
+      "title": "Original"
+     }
+    },
+    "type": "object",
+    "required": [
+     "kind",
+     "placeholder",
+     "original"
+    ],
+    "title": "RedactionOut"
+   },
+   "ReqDetail": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "public_id": {
+      "type": "string",
+      "title": "Public Id"
+     },
+     "state": {
+      "type": "string",
+      "title": "State"
+     },
+     "state_label": {
+      "type": "string",
+      "title": "State Label"
+     },
+     "stage": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Stage"
+     },
+     "title": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Title"
+     },
+     "message_kind": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Message Kind"
+     },
+     "received_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Received At"
+     },
+     "sent_at": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date-time"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Sent At"
+     },
+     "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Updated At"
+     },
+     "requester_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Requester Id"
+     },
+     "requester_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Requester Name"
+     },
+     "requester_source": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Requester Source"
+     },
+     "supplier_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Supplier Id"
+     },
+     "supplier_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Supplier Name"
+     },
+     "supplier_name_doc": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Supplier Name Doc"
+     },
+     "supplier_status": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Supplier Status"
+     },
+     "supplier_blocked": {
+      "type": "boolean",
+      "title": "Supplier Blocked"
+     },
+     "cost_center_code": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Cost Center Code"
+     },
+     "currency": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Currency"
+     },
+     "po_total": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Po Total"
+     },
+     "approval_amount": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Approval Amount"
+     },
+     "approval_amount_chf": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Approval Amount Chf"
+     },
+     "band_position": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Band Position"
+     },
+     "current_step": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/CurrentStep"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "issue_counts": {
+      "$ref": "#/components/schemas/IssueCounts"
+     },
+     "top_issue": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Top Issue"
+     },
+     "top_issue_code": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Top Issue Code"
+     },
+     "linked_to_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Linked To Id"
+     },
+     "linked_to_public_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Linked To Public Id"
+     },
+     "link_type": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Link Type"
+     },
+     "delivery_date": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Delivery Date"
+     },
+     "redaction_count": {
+      "type": "integer",
+      "title": "Redaction Count"
+     },
+     "po_number": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Po Number"
+     },
+     "source_name": {
+      "type": "string",
+      "title": "Source Name"
+     },
+     "supplier": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/SupplierOut"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "supplier_vat_doc": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Supplier Vat Doc"
+     },
+     "supplier_address_doc": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Supplier Address Doc"
+     },
+     "cost_center": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/CostCenterOut"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "cost_center_doc": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Cost Center Doc"
+     },
+     "cost_center_text": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Cost Center Text"
+     },
+     "delivery_date_text": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Delivery Date Text"
+     },
+     "delivery_date_suggested": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Delivery Date Suggested"
+     },
+     "gl_account": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Gl Account"
+     },
+     "gl_account_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Gl Account Name"
+     },
+     "gl_account_suggested": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Gl Account Suggested"
+     },
+     "gl_account_suggested_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Gl Account Suggested Name"
+     },
+     "gl_account_reason": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Gl Account Reason"
+     },
+     "quote_reference": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Quote Reference"
+     },
+     "quote_date": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Quote Date"
+     },
+     "quote_valid_until": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Quote Valid Until"
+     },
+     "vat_amount": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Vat Amount"
+     },
+     "vat_rate": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Vat Rate"
+     },
+     "fx_rate": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Fx Rate"
+     },
+     "stated_totals": {
+      "items": {
+       "$ref": "#/components/schemas/StatedTotalOut"
+      },
+      "type": "array",
+      "title": "Stated Totals"
+     },
+     "prior_approval_claim": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Prior Approval Claim"
+     },
+     "referenced_requests": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Referenced Requests"
+     },
+     "on_behalf_of_text": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "On Behalf Of Text"
+     },
+     "notes": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Notes"
+     },
+     "link_reason": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Link Reason"
+     },
+     "approval_run": {
+      "type": "integer",
+      "title": "Approval Run"
+     },
+     "rejection_reason": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Rejection Reason"
+     },
+     "rejected_by_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Rejected By Name"
+     },
+     "extraction_ok": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Extraction Ok"
+     },
+     "provenance": {
+      "additionalProperties": {
+       "$ref": "#/components/schemas/Prov"
+      },
+      "type": "object",
+      "title": "Provenance"
+     },
+     "lines": {
+      "items": {
+       "$ref": "#/components/schemas/LineOut"
+      },
+      "type": "array",
+      "title": "Lines"
+     },
+     "issues": {
+      "items": {
+       "$ref": "#/components/schemas/IssueOut"
+      },
+      "type": "array",
+      "title": "Issues"
+     },
+     "steps": {
+      "items": {
+       "$ref": "#/components/schemas/StepOut"
+      },
+      "type": "array",
+      "title": "Steps"
+     },
+     "steps_are_preview": {
+      "type": "boolean",
+      "title": "Steps Are Preview"
+     },
+     "step_history": {
+      "items": {
+       "$ref": "#/components/schemas/StepOut"
+      },
+      "type": "array",
+      "title": "Step History"
+     },
+     "email": {
+      "$ref": "#/components/schemas/EmailOut"
+     },
+     "events": {
+      "items": {
+       "$ref": "#/components/schemas/EventOut"
+      },
+      "type": "array",
+      "title": "Events"
+     },
+     "llm_runs": {
+      "items": {
+       "$ref": "#/components/schemas/LLMRunOut"
+      },
+      "type": "array",
+      "title": "Llm Runs"
+     },
+     "purchase_orders": {
+      "items": {
+       "$ref": "#/components/schemas/PurchaseOrderOut"
+      },
+      "type": "array",
+      "title": "Purchase Orders"
+     },
+     "redactions": {
+      "items": {
+       "$ref": "#/components/schemas/RedactionOut"
+      },
+      "type": "array",
+      "title": "Redactions"
+     },
+     "supplier_candidates": {
+      "items": {
+       "$ref": "#/components/schemas/SupplierCandidate"
+      },
+      "type": "array",
+      "title": "Supplier Candidates"
+     },
+     "cost_center_suggestions": {
+      "items": {
+       "$ref": "#/components/schemas/CostCenterSuggestion"
+      },
+      "type": "array",
+      "title": "Cost Center Suggestions"
+     },
+     "order_blockers": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Order Blockers"
+     },
+     "can_submit": {
+      "type": "boolean",
+      "title": "Can Submit"
+     },
+     "linked_from": {
+      "items": {
+       "$ref": "#/components/schemas/ReqSummary"
+      },
+      "type": "array",
+      "title": "Linked From"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "public_id",
+     "state",
+     "state_label",
+     "stage",
+     "title",
+     "message_kind",
+     "received_at",
+     "sent_at",
+     "updated_at",
+     "requester_id",
+     "requester_name",
+     "requester_source",
+     "supplier_id",
+     "supplier_name",
+     "supplier_name_doc",
+     "supplier_status",
+     "supplier_blocked",
+     "cost_center_code",
+     "currency",
+     "po_total",
+     "approval_amount",
+     "approval_amount_chf",
+     "band_position",
+     "current_step",
+     "issue_counts",
+     "top_issue",
+     "top_issue_code",
+     "linked_to_id",
+     "linked_to_public_id",
+     "link_type",
+     "delivery_date",
+     "redaction_count",
+     "po_number",
+     "source_name",
+     "supplier",
+     "supplier_vat_doc",
+     "supplier_address_doc",
+     "cost_center",
+     "cost_center_doc",
+     "cost_center_text",
+     "delivery_date_text",
+     "delivery_date_suggested",
+     "gl_account",
+     "gl_account_name",
+     "gl_account_suggested",
+     "gl_account_suggested_name",
+     "gl_account_reason",
+     "quote_reference",
+     "quote_date",
+     "quote_valid_until",
+     "vat_amount",
+     "vat_rate",
+     "fx_rate",
+     "stated_totals",
+     "prior_approval_claim",
+     "referenced_requests",
+     "on_behalf_of_text",
+     "notes",
+     "link_reason",
+     "approval_run",
+     "rejection_reason",
+     "rejected_by_name",
+     "extraction_ok",
+     "provenance",
+     "lines",
+     "issues",
+     "steps",
+     "steps_are_preview",
+     "step_history",
+     "email",
+     "events",
+     "llm_runs",
+     "purchase_orders",
+     "redactions",
+     "supplier_candidates",
+     "cost_center_suggestions",
+     "order_blockers",
+     "can_submit",
+     "linked_from"
+    ],
+    "title": "ReqDetail"
+   },
+   "ReqSummary": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "public_id": {
+      "type": "string",
+      "title": "Public Id"
+     },
+     "state": {
+      "type": "string",
+      "title": "State"
+     },
+     "state_label": {
+      "type": "string",
+      "title": "State Label"
+     },
+     "stage": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Stage"
+     },
+     "title": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Title"
+     },
+     "message_kind": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Message Kind"
+     },
+     "received_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Received At"
+     },
+     "sent_at": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date-time"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Sent At"
+     },
+     "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Updated At"
+     },
+     "requester_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Requester Id"
+     },
+     "requester_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Requester Name"
+     },
+     "requester_source": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Requester Source"
+     },
+     "supplier_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Supplier Id"
+     },
+     "supplier_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Supplier Name"
+     },
+     "supplier_name_doc": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Supplier Name Doc"
+     },
+     "supplier_status": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Supplier Status"
+     },
+     "supplier_blocked": {
+      "type": "boolean",
+      "title": "Supplier Blocked"
+     },
+     "cost_center_code": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Cost Center Code"
+     },
+     "currency": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Currency"
+     },
+     "po_total": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Po Total"
+     },
+     "approval_amount": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Approval Amount"
+     },
+     "approval_amount_chf": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Approval Amount Chf"
+     },
+     "band_position": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Band Position"
+     },
+     "current_step": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/CurrentStep"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "issue_counts": {
+      "$ref": "#/components/schemas/IssueCounts"
+     },
+     "top_issue": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Top Issue"
+     },
+     "top_issue_code": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Top Issue Code"
+     },
+     "linked_to_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Linked To Id"
+     },
+     "linked_to_public_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Linked To Public Id"
+     },
+     "link_type": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Link Type"
+     },
+     "delivery_date": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Delivery Date"
+     },
+     "redaction_count": {
+      "type": "integer",
+      "title": "Redaction Count"
+     },
+     "po_number": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Po Number"
+     },
+     "source_name": {
+      "type": "string",
+      "title": "Source Name"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "public_id",
+     "state",
+     "state_label",
+     "stage",
+     "title",
+     "message_kind",
+     "received_at",
+     "sent_at",
+     "updated_at",
+     "requester_id",
+     "requester_name",
+     "requester_source",
+     "supplier_id",
+     "supplier_name",
+     "supplier_name_doc",
+     "supplier_status",
+     "supplier_blocked",
+     "cost_center_code",
+     "currency",
+     "po_total",
+     "approval_amount",
+     "approval_amount_chf",
+     "band_position",
+     "current_step",
+     "issue_counts",
+     "top_issue",
+     "top_issue_code",
+     "linked_to_id",
+     "linked_to_public_id",
+     "link_type",
+     "delivery_date",
+     "redaction_count",
+     "po_number",
+     "source_name"
+    ],
+    "title": "ReqSummary"
+   },
+   "SampleOut": {
+    "properties": {
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "subject": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Subject"
+     },
+     "sender": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Sender"
+     },
+     "sent_at": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date-time"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Sent At"
+     },
+     "has_attachment": {
+      "type": "boolean",
+      "title": "Has Attachment"
+     },
+     "requisition_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Requisition Id"
+     }
+    },
+    "type": "object",
+    "required": [
+     "name",
+     "subject",
+     "sender",
+     "sent_at",
+     "has_attachment",
+     "requisition_id"
+    ],
+    "title": "SampleOut"
+   },
+   "SettingsOut": {
+    "properties": {
+     "decision_checks_enabled": {
+      "type": "boolean",
+      "title": "Decision Checks Enabled"
+     },
+     "check_high": {
+      "type": "number",
+      "title": "Check High"
+     },
+     "check_low": {
+      "type": "number",
+      "title": "Check Low"
+     },
+     "llm_cache_mode": {
+      "type": "string",
+      "title": "Llm Cache Mode"
+     }
+    },
+    "type": "object",
+    "required": [
+     "decision_checks_enabled",
+     "check_high",
+     "check_low",
+     "llm_cache_mode"
+    ],
+    "title": "SettingsOut"
+   },
+   "SettingsPatch": {
+    "properties": {
+     "decision_checks_enabled": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Decision Checks Enabled"
+     },
+     "check_high": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Check High"
+     },
+     "check_low": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Check Low"
+     },
+     "llm_cache_mode": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Llm Cache Mode"
+     }
+    },
+    "type": "object",
+    "title": "SettingsPatch"
+   },
+   "StateCount": {
+    "properties": {
+     "state": {
+      "type": "string",
+      "title": "State"
+     },
+     "label": {
+      "type": "string",
+      "title": "Label"
+     },
+     "count": {
+      "type": "integer",
+      "title": "Count"
+     }
+    },
+    "type": "object",
+    "required": [
+     "state",
+     "label",
+     "count"
+    ],
+    "title": "StateCount"
+   },
+   "StatedTotalOut": {
+    "properties": {
+     "label": {
+      "type": "string",
+      "title": "Label"
+     },
+     "amount": {
+      "type": "string",
+      "title": "Amount"
+     },
+     "includes_vat": {
+      "type": "string",
+      "title": "Includes Vat"
+     },
+     "approximate": {
+      "type": "boolean",
+      "title": "Approximate"
+     },
+     "source": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Source"
+     },
+     "evidence": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Evidence"
+     },
+     "overridden": {
+      "type": "boolean",
+      "title": "Overridden",
+      "default": false
+     }
+    },
+    "type": "object",
+    "required": [
+     "label",
+     "amount",
+     "includes_vat",
+     "approximate"
+    ],
+    "title": "StatedTotalOut"
+   },
+   "StatusOut": {
+    "properties": {
+     "erp": {
+      "type": "string",
+      "title": "Erp"
+     },
+     "api_key_configured": {
+      "type": "boolean",
+      "title": "Api Key Configured"
+     },
+     "extraction_model": {
+      "type": "string",
+      "title": "Extraction Model"
+     },
+     "decisions_model": {
+      "type": "string",
+      "title": "Decisions Model"
+     },
+     "counts": {
+      "additionalProperties": {
+       "type": "integer"
+      },
+      "type": "object",
+      "title": "Counts"
+     },
+     "cached_responses": {
+      "type": "integer",
+      "title": "Cached Responses"
+     }
+    },
+    "type": "object",
+    "required": [
+     "erp",
+     "api_key_configured",
+     "extraction_model",
+     "decisions_model",
+     "counts",
+     "cached_responses"
+    ],
+    "title": "StatusOut"
+   },
+   "StepOut": {
+    "properties": {
+     "run": {
+      "type": "integer",
+      "title": "Run"
+     },
+     "position": {
+      "type": "integer",
+      "title": "Position"
+     },
+     "roles": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Roles"
+     },
+     "role_labels": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Role Labels"
+     },
+     "holder_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Holder Id"
+     },
+     "approver_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Approver Id"
+     },
+     "approver_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Approver Name"
+     },
+     "on_behalf_of_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "On Behalf Of Id"
+     },
+     "on_behalf_of_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "On Behalf Of Name"
+     },
+     "note": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Note"
+     },
+     "assigned_manually": {
+      "type": "boolean",
+      "title": "Assigned Manually"
+     },
+     "status": {
+      "type": "string",
+      "title": "Status"
+     },
+     "decided_at": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date-time"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Decided At"
+     },
+     "comment": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Comment"
+     }
+    },
+    "type": "object",
+    "required": [
+     "run",
+     "position",
+     "roles",
+     "role_labels",
+     "approver_id",
+     "approver_name",
+     "on_behalf_of_id",
+     "on_behalf_of_name",
+     "note",
+     "assigned_manually",
+     "status"
+    ],
+    "title": "StepOut"
+   },
+   "SupplierCandidate": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "score": {
+      "type": "integer",
+      "title": "Score"
+     },
+     "via": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Via"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "name",
+     "score"
+    ],
+    "title": "SupplierCandidate"
+   },
+   "SupplierCreateIn": {
+    "properties": {
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "vat_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Vat Id"
+     },
+     "country": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Country"
+     },
+     "default_currency": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Default Currency"
+     },
+     "payment_terms_days": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Payment Terms Days",
+      "default": 30
+     },
+     "requisition_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Requisition Id"
+     }
+    },
+    "type": "object",
+    "required": [
+     "name"
+    ],
+    "title": "SupplierCreateIn"
+   },
+   "SupplierOut": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "vat_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Vat Id"
+     },
+     "country": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Country"
+     },
+     "default_currency": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Default Currency"
+     },
+     "payment_terms_days": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Payment Terms Days"
+     },
+     "preferred": {
+      "type": "boolean",
+      "title": "Preferred"
+     },
+     "status": {
+      "type": "string",
+      "title": "Status"
+     },
+     "created_by_clerk": {
+      "type": "boolean",
+      "title": "Created By Clerk"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "name",
+     "vat_id",
+     "country",
+     "default_currency",
+     "payment_terms_days",
+     "preferred",
+     "status",
+     "created_by_clerk"
+    ],
+    "title": "SupplierOut"
+   },
+   "ThreadMessageOut": {
+    "properties": {
+     "author_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Author Name"
+     },
+     "author_email": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Author Email"
+     },
+     "sent_at": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Sent At"
+     },
+     "subject": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Subject"
+     },
+     "text": {
+      "type": "string",
+      "title": "Text"
+     },
+     "position": {
+      "type": "integer",
+      "title": "Position"
+     },
+     "is_internal": {
+      "type": "boolean",
+      "title": "Is Internal"
+     },
+     "employee_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Employee Id"
+     }
+    },
+    "type": "object",
+    "required": [
+     "author_name",
+     "author_email",
+     "sent_at",
+     "subject",
+     "text",
+     "position",
+     "is_internal",
+     "employee_id"
+    ],
+    "title": "ThreadMessageOut"
+   },
+   "ValidationError": {
+    "properties": {
+     "loc": {
+      "items": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "integer"
+        }
+       ]
+      },
+      "type": "array",
+      "title": "Location"
+     },
+     "msg": {
+      "type": "string",
+      "title": "Message"
+     },
+     "type": {
+      "type": "string",
+      "title": "Error Type"
+     },
+     "input": {
+      "title": "Input"
+     },
+     "ctx": {
+      "type": "object",
+      "title": "Context"
+     }
+    },
+    "type": "object",
+    "required": [
+     "loc",
+     "msg",
+     "type"
+    ],
+    "title": "ValidationError"
+   },
+   "WorkflowOut": {
+    "properties": {
+     "states": {
+      "items": {
+       "$ref": "#/components/schemas/StateCount"
+      },
+      "type": "array",
+      "title": "States"
+     },
+     "transitions": {
+      "items": {
+       "prefixItems": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "string"
+        }
+       ],
+       "type": "array",
+       "maxItems": 2,
+       "minItems": 2
+      },
+      "type": "array",
+      "title": "Transitions"
+     }
+    },
+    "type": "object",
+    "required": [
+     "states",
+     "transitions"
+    ],
+    "title": "WorkflowOut"
+   }
+  }
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "raw": "{\"message_kind\":\"new_request\",\"summary\":\"IN-M12 inductive proximity switches\",\"supplier_name\":\"Sensorik Nord GmbH\",\"supplier_name_quote\":\"Sensorik Nord GmbH\",\"supplier_vat_id\":\"DE889900112\",\"supplier_address\":\"Nordkai 8, 24937 Flensburg, Germany\",\"currency\":null,\"line_items\":[{\"kind\":\"item\",\"description\":\"Inductive proximity switches, series IN-M12\",\"item_code\":null,\"quantity\":20.0,\"quantity_is_approximate\":false,\"unit\":\"Stk\",\"unit_price\":null,\"price_basis\":null,\"stated_line_total\":null,\"source_quote\":\"Bitte 20 Stk beschaffen\"}],\"stated_totals\":[],\"vat_amount\":null,\"vat_rate_percent\":null,\"cost_center_code\":\"CC-2002\",\"cost_center_text\":null,\"cost_center_quote\":\"Kostenstelle CC-2002.\",\"delivery_date_text\":null,\"delivery_date_iso\":null,\"quote_reference\":null,\"quote_date_iso\":null,\"quote_valid_until_iso\":null,\"referenced_requests\":[],\"on_behalf_of\":null,\"claims_prior_approval\":false,\"prior_approval_quote\":null,\"gl_account_suggestion\":\"6100\",\"gl_account_reason\":\"The requested proximity switches are hardware for the R&D Test Lab.\",\"notes_for_clerk\":[\"The attached datasheet is not an offer and contains no prices.\"]}",
+ "model": "gpt-6-luna",
+ "latency_ms": 11330,
+ "input_tokens": 3524,
+ "output_tokens": 893
+}

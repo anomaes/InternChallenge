@@ -13,3 +13,5 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP"]
+# The formatter owns line length; long strings and URLs are fine.
+ignore = ["E501", "B008"]  # B008: FastAPI's Depends() idiom
